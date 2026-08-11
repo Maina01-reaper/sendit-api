@@ -1,29 +1,33 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, status, Request, Form
-from fastapi.security import OAuth2PasswordRequestForm
-from sqlmodel import Session, select
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
-from datetime import datetime
-import os
-import json
 import asyncio
-import time
-import platform
+import json
 import logging
+import os
+import platform
+import time
+from datetime import datetime
 from logging.handlers import RotatingFileHandler
+
 import aiofiles
 import httpx
-from typing import Optional
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi.security import OAuth2PasswordRequestForm
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+from sqlmodel import Session, select
 
-from database.session import get_session
-from models.user import User, UserCreate, UserResponse
-from models.document import Document, DocumentCreate, DocumentUpdate
-from models.webhook import Webhook, WebhookCreate
 from auth import (
-    hash_password, verify_password, create_access_token,
-    get_current_user, get_current_admin, get_current_manager
+    create_access_token,
+    get_current_admin,
+    get_current_manager,
+    get_current_user,
+    hash_password,
+    verify_password,
 )
+from database.session import get_session
+from models.document import Document, DocumentUpdate
+from models.user import User, UserCreate, UserResponse
+from models.webhook import Webhook, WebhookCreate
 from services.weather import get_weather
 
 app = FastAPI(title="SendIt API", version="1.0.0")
@@ -175,7 +179,7 @@ async def upload_document(
     request: Request,
     file: UploadFile = File(...),
     city: str = Form(...),
-    description: Optional[str] = Form(None),
+    description: str | None = Form(None),
     country: str = Form("Kenya"),
     current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session)
@@ -272,8 +276,8 @@ async def upload_document(
 @limiter.limit("30/minute")
 def list_documents(
     request: Request,
-    status: Optional[str] = None,
-    city: Optional[str] = None,
+    status: str | None = None,
+    city: str | None = None,
     current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session)
 ):
@@ -294,11 +298,11 @@ def list_documents(
 @limiter.limit("20/minute")
 def search_documents(
     request: Request,
-    q: Optional[str] = None,
-    city: Optional[str] = None,
-    status: Optional[str] = None,
-    date_from: Optional[datetime] = None,
-    date_to: Optional[datetime] = None,
+    q: str | None = None,
+    city: str | None = None,
+    status: str | None = None,
+    date_from: datetime | None = None,
+    date_to: datetime | None = None,
     current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session)
 ):

@@ -1,12 +1,12 @@
-import httpx
 import os
-from typing import Optional, Dict
+
+import httpx
 
 WEATHER_API_URL = os.getenv("WEATHER_API_URL", "https://api.open-meteo.com/v1/forecast")
 GEOCODING_API_URL = "https://geocoding-api.open-meteo.com/v1/search"
 
 
-async def get_coordinates(city: str, country: str = "Kenya") -> Optional[tuple]:
+async def get_coordinates(city: str, country: str = "Kenya") -> tuple | None:
     """Get latitude and longitude for a city using Open-Meteo geocoding."""
     async with httpx.AsyncClient() as client:
         try:
@@ -26,7 +26,7 @@ async def get_coordinates(city: str, country: str = "Kenya") -> Optional[tuple]:
         return None
 
 
-async def get_weather(city: str, country: str = "Kenya") -> Optional[Dict]:
+async def get_weather(city: str, country: str = "Kenya") -> dict | None:
     """Fetch current weather for a city using Open-Meteo API."""
     coordinates = await get_coordinates(city, country)
     if not coordinates:

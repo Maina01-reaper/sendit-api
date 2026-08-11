@@ -1,13 +1,14 @@
-from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime
-from typing import Optional, List, TYPE_CHECKING
+from typing import TYPE_CHECKING
+
+from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from models.document import Document
 
 
 class User(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     username: str = Field(unique=True, index=True, min_length=3, max_length=50)
     email: str = Field(unique=True, index=True)
     hashed_password: str
@@ -16,9 +17,9 @@ class User(SQLModel, table=True):
     is_active: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    last_login: Optional[datetime] = None
+    last_login: datetime | None = None
 
-    documents: List["Document"] = Relationship(back_populates="uploader")
+    documents: list["Document"] = Relationship(back_populates="uploader")
 
 
 class UserCreate(SQLModel):

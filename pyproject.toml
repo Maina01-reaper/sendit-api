@@ -1,0 +1,5 @@
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+ignore = ["B008", "BLE001", "DTZ003", "DTZ005", "PLW1508"]

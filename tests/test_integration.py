@@ -13,7 +13,7 @@ def test_full_document_lifecycle(client):
         "email": "flow@example.com",
         "password": "flowpass123",
         "full_name": "Flow User",
-        "role": "admin",
+        "role": "admin"
     }
     register_response = client.post("/register", json=user_data)
     assert register_response.status_code == 201
@@ -21,7 +21,7 @@ def test_full_document_lifecycle(client):
     # 2. Log in
     login_response = client.post(
         "/login",
-        data={"username": user_data["username"], "password": user_data["password"]},
+        data={"username": user_data["username"], "password": user_data["password"]}
     )
     assert login_response.status_code == 200
     token = login_response.json()["access_token"]
@@ -29,14 +29,8 @@ def test_full_document_lifecycle(client):
 
     # 3. Upload a document
     files = {"file": ("flow.pdf", io.BytesIO(b"%PDF-1.4 flow test"), "application/pdf")}
-    data = {
-        "city": "Nairobi",
-        "country": "Kenya",
-        "description": "Integration test doc",
-    }
-    upload_response = client.post(
-        "/documents/upload", files=files, data=data, headers=headers
-    )
+    data = {"city": "Nairobi", "country": "Kenya", "description": "Integration test doc"}
+    upload_response = client.post("/documents/upload", files=files, data=data, headers=headers)
     assert upload_response.status_code == 200
     document_id = upload_response.json()["document_id"]
 
@@ -46,13 +40,11 @@ def test_full_document_lifecycle(client):
     assert get_response.json()["city"] == "Nairobi"
 
     # 5. Update metadata
-    update_response = client.patch(
+    _update_response = client.patch(
         f"/documents/{document_id}",
         json={"description": "Updated description"},
-        headers=headers,
+        headers=headers
     )
-    # (Only include this step if you've added a PATCH /documents/{id} endpoint —
-    #  see note below)
 
     # 6. Delete it
     delete_response = client.delete(f"/documents/{document_id}", headers=headers)
