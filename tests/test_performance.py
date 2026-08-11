@@ -12,7 +12,7 @@ def upload_payload():
 
 def test_upload_performance(client, auth_headers, upload_payload, benchmark):
     """Benchmark document upload throughput."""
-    files, data = upload_payload
+    _files, data = upload_payload
 
     def do_upload():
         # Need a fresh BytesIO each call since it gets consumed on read
